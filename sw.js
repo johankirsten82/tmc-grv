@@ -1,4 +1,6 @@
-const C="grv-v1",F=["./","index.html","manifest.json","icons/icon-192.png","icons/icon-512.png","icons/apple-touch-icon.png","icons/favicon-32.png","icons/icon.svg","icons/icon-maskable-512.png"];
-self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F).then(()=>c.add("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js").catch(()=>{}))));self.skipWaiting()});
-self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))));self.clients.claim()});
-self.addEventListener("fetch",e=>{const q=e.request;if(q.method!=="GET"||q.url.includes("script.google"))return;e.respondWith(fetch(q).then(r=>{if(r.ok){const c=r.clone();caches.open(C).then(x=>x.put(q,c))}return r}).catch(()=>caches.match(q,{ignoreSearch:true}).then(r=>r||caches.match("index.html"))))});
+const C="tmc-grv-v2",F=["./","index.html","manifest.json?v=2","icons/icon-192.png?v=2","icons/icon-512.png?v=2","icons/apple-touch-icon.png?v=2","icons/favicon-32.png?v=2","icons/icon.svg?v=2","icons/icon-maskable-512.png?v=2"];
+self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F.map(u=>new Request(u,{cache:"reload"}))).then(()=>c.add("https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js").catch(()=>{}))));self.skipWaiting()});
+// only remove OUR old caches (grv-v1, tmc-grv-*); never touch the Purchases app caches (pa-*) on the same origin
+self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C&&(x.startsWith("tmc-grv-")||/^grv-v\d+$/.test(x))).map(x=>caches.delete(x)))));self.clients.claim()});
+self.addEventListener("fetch",e=>{const q=e.request;if(q.method!=="GET"||q.url.includes("script.google"))return;const u=new URL(q.url);if(u.origin===location.origin&&!u.pathname.startsWith(new URL(self.registration.scope).pathname))return;
+e.respondWith(fetch(q,{cache:q.mode==="navigate"?"no-store":"default"}).then(r=>{if(r.ok){const c=r.clone();caches.open(C).then(x=>x.put(q,c))}return r}).catch(()=>caches.match(q,{ignoreSearch:true}).then(r=>r||caches.match("index.html"))))});
