@@ -52,6 +52,7 @@ button{background:#0f766e;color:#fff;border:0;font-weight:600;margin-top:12px}bu
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
 <script>
 const $=i=>document.getElementById(i),K="grv-db",today=()=>new Date().toISOString().slice(0,10);
+if(!localStorage.grvUrl)localStorage.grvUrl="https://script.google.com/macros/s/AKfycbw_hEqY6Cgd3XPz53J5lKnjadk69s79ibUKXd3ID7nxQs5gNnAlQb06xhBwI3qFD6i9pQ/exec";if(!localStorage.grvCode)localStorage.grvCode="Sahara-4827";
 let db=JSON.parse(localStorage.getItem(K)||'{"grv":{},"note":{},"q":[],"since":0}'),edit=null,photo="",gridMode=1;
 const dev=localStorage.grvDev||(localStorage.grvDev=Math.random().toString(36).slice(2,8));
 const persist=()=>localStorage.setItem(K,JSON.stringify(db));
