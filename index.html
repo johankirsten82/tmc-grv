@@ -1,0 +1,113 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f766e"><link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png"><link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png"><meta name="apple-mobile-web-app-capable" content="yes">
+<title>TMC GRV</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#f1f5f9;color:#0f172a;padding-bottom:76px}
+header{background:#0f766e;color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2}
+h1{font-size:20px;margin:0}main{padding:12px;max-width:600px;margin:auto}
+.card{background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px #0002}
+label{display:block;font-size:14px;color:#475569;margin:8px 0 4px}
+input,select,button{font-size:18px;min-height:52px;width:100%;border:1px solid #cbd5e1;border-radius:10px;padding:10px}
+textarea{font-size:16px;width:100%;min-height:70px;border:1px solid #cbd5e1;border-radius:10px;padding:10px;font-family:inherit}
+.row{display:flex;gap:10px}.row>*{flex:1}
+button{background:#0f766e;color:#fff;border:0;font-weight:600;margin-top:12px}button.sec{background:#e2e8f0;color:#0f172a}
+.ln{border:1px solid #e2e8f0;border-radius:10px;padding:8px;margin-top:8px}.ln input,.ln select{min-height:46px;font-size:16px}.ln .row{gap:6px;margin-top:6px}
+.x{width:46px!important;min-height:46px;margin:0;padding:0;flex:0 0 46px!important;background:#fee2e2;color:#b91c1c}
+.item{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding:10px 0;gap:8px;cursor:pointer}.item small{color:#64748b}
+.badge{display:inline-block;font-size:12px;padding:2px 8px;border-radius:99px;margin-inline-start:6px}.b-full{background:#dcfce7;color:#166534}.b-short{background:#fef3c7;color:#92400e}.b-dmg{background:#fee2e2;color:#b91c1c}
+.tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:#fff;border-top:1px solid #cbd5e1;z-index:10;padding-bottom:env(safe-area-inset-bottom)}.tabs button{flex:1;margin:0;border-radius:0;background:#fff;color:#475569;min-height:58px;font-size:14px}.tabs button.on{color:#0f766e;border-top:3px solid #0f766e;background:#f0fdfa}
+.grid{overflow:auto;max-height:60vh}.grid table{border-collapse:collapse;font-size:13px;white-space:nowrap}.grid th{background:#0f766e;color:#fff;position:sticky;top:0}.grid td,.grid th{border:1px solid #cbd5e1;padding:4px 6px}.grid tr:nth-child(even) td{background:#f8fafc}
+#toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#0f766e;color:#fff;padding:10px 16px;border-radius:10px;z-index:30;display:none}
+.pv{max-width:100%;max-height:180px;border-radius:10px;margin-top:6px}.st{font-size:13px;color:#475569}
+</style></head><body>
+<header><h1>📦 TMC GRV</h1><span class="st" id="syncSt" style="color:#ccfbf1"></span></header>
+<main>
+<section id="t-new">
+ <div class="card"><b id="fTitle">New Goods Received Voucher</b>
+  <div class="row"><div><label>GRV no.</label><input id="gNo"></div><div><label>Date</label><input id="gDate" type="date"></div></div>
+  <label>Supplier</label><input id="gSup" list="supL"><datalist id="supL"></datalist>
+  <label>Linked PO / purchase no. (optional)</label><input id="gPo">
+  <div class="row"><div><label>Received by</label><input id="gBy"></div><div><label>Storage location</label><input id="gLoc" list="locL"><datalist id="locL"></datalist></div></div>
+  <label>Items</label><div id="lines"></div><button class="sec" id="addLn">+ Add item</button>
+  <label>Notes</label><textarea id="gNote"></textarea>
+  <label>Photo (delivery note / goods)</label><input id="gPh" type="file" accept="image/*" capture="environment"><img id="pv" class="pv" hidden>
+  <button id="save">💾 Save GRV</button><button class="sec" id="clr">Clear</button>
+ </div>
+</section>
+<section id="t-list" hidden><div class="card"><input id="q" placeholder="🔍 Search GRV, supplier, item, PO"><div id="list"></div></div></section>
+<section id="t-grid" hidden><div class="card"><b>Register (Excel view)</b>
+ <div class="row"><button class="sec" id="gv1">GRV log</button><button class="sec" id="gv2">Item lines</button></div>
+ <div class="grid" id="grid"></div><button id="xl">⬇️ Download Excel (TMC-GRV.xlsx)</button></div>
+<div class="card"><b>⬆️ Load Excel file</b><p class="st">Pick a .xlsx with an "Item Lines" sheet (or any sheet with columns Item, Qty Ordered, Qty Received, GRV No / PO No, Supplier). Rows without a GRV No are grouped by PO No into new GRVs (received qty blank = expected items).</p>
+<input id="imp" type="file" accept=".xlsx,.xls,.csv"><div id="impPv"></div></div></section>
+<section id="t-note" hidden><div class="card"><b>📝 Notepad</b><textarea id="nTxt" placeholder="Write a note…" style="min-height:110px"></textarea><button id="nSave">Save note</button><div id="nList"></div></div></section>
+<section id="t-set" hidden><div class="card"><b>☁️ Google Sheet sync</b>
+ <label>Web app URL (ends in /exec)</label><input id="sUrl"><label>Team code</label><input id="sCode">
+ <button id="sSave">Save sync settings</button><button class="sec" id="sNow">Sync now</button><p class="st" id="sInfo"></p></div></section>
+</main>
+<div id="toast"></div>
+<nav class="tabs"><button data-t="new" class="on">➕ Receive</button><button data-t="list">📋 GRVs</button><button data-t="grid">📊 Excel</button><button data-t="note">📝 Notes</button><button data-t="set">⚙️</button></nav>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
+<script>
+const $=i=>document.getElementById(i),K="grv-db",today=()=>new Date().toISOString().slice(0,10);
+let db=JSON.parse(localStorage.getItem(K)||'{"grv":{},"note":{},"q":[],"since":0}'),edit=null,photo="",gridMode=1;
+const dev=localStorage.grvDev||(localStorage.grvDev=Math.random().toString(36).slice(2,8));
+const persist=()=>localStorage.setItem(K,JSON.stringify(db));
+const toast=m=>{const t=$("toast");t.textContent=m;t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>t.style.display="none",2200)};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function change(kind,id,data,del){const u=Date.now();if(del)delete db[kind][id];else db[kind][id]={...data,u};db.q.push({kind,id,u,del:del?1:0,data:del?null:data});persist();sync()}
+function nextNo(){let n=0;Object.values(db.grv).forEach(g=>{const m=/(\d+)$/.exec(g.no||"");if(m)n=Math.max(n,+m[1])});return "GRV-"+String(n+1).padStart(4,"0")}
+function addLine(l={}){const d=document.createElement("div");d.className="ln";d.innerHTML=`<div class="row"><input class="li" placeholder="Item" value="${esc(l.item)}"><input class="lu" placeholder="Unit" value="${esc(l.unit)}" style="flex:0 0 80px"><button class="x">✕</button></div>
+<div class="row"><label style="margin:0">Ordered<input class="lo" type="number" inputmode="decimal" value="${l.ord??""}"></label><label style="margin:0">Received<input class="lr" type="number" inputmode="decimal" value="${l.rec??""}"></label><label style="margin:0">Condition<select class="lc">${["Good","Damaged","Short","Wrong item"].map(c=>`<option ${l.cond==c?"selected":""}>${c}</option>`).join("")}</select></label></div>`;
+d.querySelector(".x").onclick=()=>d.remove();$("lines").appendChild(d)}
+function resetForm(){edit=null;photo="";$("fTitle").textContent="New Goods Received Voucher";$("gNo").value=nextNo();$("gDate").value=today();["gSup","gPo","gNote","gPh"].forEach(i=>$(i).value="");$("gBy").value=localStorage.grvBy||"";$("gLoc").value="";$("pv").hidden=true;$("lines").innerHTML="";addLine()}
+function status(g){const L=g.lines||[];if(L.some(l=>l.cond!="Good"))return["Issue","b-dmg"];if(L.some(l=>+l.rec<+l.ord))return["Short","b-short"];return["Complete","b-full"]}
+$("addLn").onclick=()=>addLine();$("clr").onclick=resetForm;
+$("gPh").onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{const s=Math.min(1,800/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=im.width*s;c.height=im.height*s;c.getContext("2d").drawImage(im,0,0,c.width,c.height);photo=c.toDataURL("image/jpeg",.6);$("pv").src=photo;$("pv").hidden=false};im.src=URL.createObjectURL(f)};
+$("save").onclick=()=>{const lines=[...document.querySelectorAll("#lines .ln")].map(d=>({item:d.querySelector(".li").value.trim(),unit:d.querySelector(".lu").value.trim(),ord:+d.querySelector(".lo").value||0,rec:+d.querySelector(".lr").value||0,cond:d.querySelector(".lc").value})).filter(l=>l.item);
+ if(!$("gSup").value.trim()||!lines.length)return toast("Add supplier and at least one item");
+ const id=edit||Date.now()+dev,g={no:$("gNo").value.trim(),date:$("gDate").value,sup:$("gSup").value.trim(),po:$("gPo").value.trim(),by:$("gBy").value.trim(),loc:$("gLoc").value.trim(),note:$("gNote").value.trim(),photo:photo||"",lines};
+ localStorage.grvBy=g.by;change("grv",id,g);toast("✅ Saved "+g.no);resetForm();render()};
+function openG(id){const g=db.grv[id];edit=id;photo=g.photo||"";$("fTitle").textContent="Edit "+g.no;$("gNo").value=g.no;$("gDate").value=g.date;$("gSup").value=g.sup;$("gPo").value=g.po;$("gBy").value=g.by;$("gLoc").value=g.loc;$("gNote").value=g.note;$("pv").src=photo;$("pv").hidden=!photo;$("lines").innerHTML="";g.lines.forEach(addLine);tab("new")}
+function render(){const q=$("q").value.toLowerCase(),G=Object.entries(db.grv).sort((a,b)=>(b[1].date+b[1].no).localeCompare(a[1].date+a[1].no));
+ $("list").innerHTML=G.filter(([,g])=>JSON.stringify([g.no,g.sup,g.po,g.lines]).toLowerCase().includes(q)).map(([id,g])=>{const[s,c]=status(g);return`<div class="item" data-id="${id}"><div><b>${esc(g.no)}</b> <span class="badge ${c}">${s}</span><br><small>${esc(g.date)} · ${esc(g.sup)}${g.po?" · PO "+esc(g.po):""} · ${g.lines.length} item(s)${g.photo?" · 📷":""}</small></div><button class="x" data-del="${id}">🗑</button></div>`}).join("")||"<p class='st'>No GRVs yet.</p>";
+ $("supL").innerHTML=[...new Set(G.map(x=>x[1].sup))].map(s=>`<option value="${esc(s)}">`).join("");$("locL").innerHTML=[...new Set(G.map(x=>x[1].loc).filter(Boolean))].map(s=>`<option value="${esc(s)}">`).join("");
+ const [h,r]=tables()[gridMode-1];$("grid").innerHTML=`<table><tr>${h.map(x=>`<th>${x}</th>`).join("")}</tr>${r.map(row=>`<tr>${row.map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</table>`;
+ $("nList").innerHTML=Object.entries(db.note).sort((a,b)=>b[1].u-a[1].u).map(([id,n])=>`<div class="item"><div style="white-space:pre-wrap">${esc(n.text)}<br><small>${new Date(n.at).toLocaleString()}</small></div><button class="x" data-ndel="${id}">🗑</button></div>`).join("");
+ $("syncSt").textContent=db.q.length?"⏳ "+db.q.length+" to sync":(localStorage.grvLast?"☁️ synced":"")}
+function tables(){const G=Object.values(db.grv).sort((a,b)=>(a.date+a.no).localeCompare(b.date+b.no));
+ return[[["GRV No","Date","Supplier","PO No","Received By","Location","Items","Status","Notes","Photo"],G.map(g=>[g.no,g.date,g.sup,g.po,g.by,g.loc,g.lines.length,status(g)[0],g.note,g.photo?"Yes":""])],
+ [["GRV No","Date","Supplier","PO No","Item","Unit","Qty Ordered","Qty Received","Difference","Condition","Location"],G.flatMap(g=>g.lines.map(l=>[g.no,g.date,g.sup,g.po,l.item,l.unit,l.ord,l.rec,l.rec-l.ord,l.cond,g.loc]))],
+ [["Date","Note"],Object.values(db.note).map(n=>[new Date(n.at).toISOString().slice(0,16).replace("T"," "),n.text])]]}
+$("gv1").onclick=()=>{gridMode=1;render()};$("gv2").onclick=()=>{gridMode=2;render()};
+$("xl").onclick=()=>{if(!window.XLSX)return toast("Excel needs internet once");const wb=XLSX.utils.book_new();tables().forEach(([h,r],i)=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet([h,...r]),["GRV Log","Item Lines","Notes"][i]));XLSX.writeFile(wb,"TMC-GRV.xlsx")};
+document.addEventListener("click",e=>{const t=e.target;if(t.dataset.del){e.stopPropagation();if(confirm("Delete this GRV?")){change("grv",t.dataset.del,null,1);render()}return}if(t.dataset.ndel){if(confirm("Delete note?")){change("note",t.dataset.ndel,null,1);render()}return}const it=t.closest("#list .item");if(it)openG(it.dataset.id)});
+$("q").oninput=render;
+let pend=[];
+$("imp").onchange=async e=>{const f=e.target.files[0];if(!f)return;if(!window.XLSX)return toast("Excel needs internet once");
+ const wb=XLSX.read(await f.arrayBuffer(),{cellDates:true}),sn=wb.SheetNames.find(n=>/item/i.test(n))||wb.SheetNames.find(n=>XLSX.utils.sheet_to_json(wb.Sheets[n])[0]?.Item!==undefined)||wb.SheetNames[0];
+ const rows=XLSX.utils.sheet_to_json(wb.Sheets[sn],{defval:""}),g=(r,...k)=>{for(const x of Object.keys(r))if(k.some(y=>x.trim().toLowerCase()==y))return r[x];return""};
+ const by={},exist=new Set(Object.values(db.grv).map(x=>x.no));let n=0;
+ rows.forEach(r=>{const item=String(g(r,"item","description","name")).trim();if(!item)return;let no=String(g(r,"grv no","grv")).trim(),po=String(g(r,"po no","po","order","purchase no")).trim();
+  const key=no||"PO:"+(po||"none");let d=g(r,"date");d=d instanceof Date?d.toISOString().slice(0,10):String(d||today()).slice(0,10);
+  const G=by[key]||(by[key]={no,date:d,sup:String(g(r,"supplier")).trim(),po,by:String(g(r,"received by")).trim(),loc:String(g(r,"location","storage location")).trim(),note:"Imported from "+f.name,photo:"",lines:[]});
+  const rec=g(r,"qty received","received");G.lines.push({item,unit:String(g(r,"unit")).trim(),ord:+g(r,"qty ordered","ordered","qty")||0,rec:rec===""?0:+rec,cond:String(g(r,"condition")).trim()||"Good"})});
+ pend=Object.values(by).filter(x=>!exist.has(x.no));const skip=Object.values(by).length-pend.length;
+ let mx=0;[...exist,...pend.map(x=>x.no)].forEach(v=>{const m=/(\d+)$/.exec(v||"");if(m)mx=Math.max(mx,+m[1])});pend.forEach(x=>{if(!x.no)x.no="GRV-"+String(++mx).padStart(4,"0")});
+ $("impPv").innerHTML=`<p class="st">Sheet "${esc(sn)}": ${pend.length} GRV(s), ${pend.reduce((a,x)=>a+x.lines.length,0)} item line(s)${skip?`, ${skip} already in app (skipped)`:""}.</p><div class="grid"><table><tr><th>GRV</th><th>Date</th><th>Supplier</th><th>PO</th><th>Item</th><th>Ord</th><th>Rec</th></tr>${pend.flatMap(x=>x.lines.map(l=>`<tr><td>${esc(x.no)}</td><td>${esc(x.date)}</td><td>${esc(x.sup)}</td><td>${esc(x.po)}</td><td>${esc(l.item)}</td><td>${l.ord}</td><td>${l.rec}</td></tr>`)).join("")}</table></div>${pend.length?'<button id="impOk">✅ Import these</button><button class="sec" id="impNo">Cancel</button>':""}`;
+ if(pend.length){$("impOk").onclick=()=>{pend.forEach((x,i)=>change("grv",Date.now()+i+dev,x));toast("Imported "+pend.length+" GRV(s)");pend=[];$("impPv").innerHTML="";$("imp").value="";render()};$("impNo").onclick=()=>{pend=[];$("impPv").innerHTML="";$("imp").value=""}}};
+$("nSave").onclick=()=>{const v=$("nTxt").value.trim();if(!v)return;change("note",Date.now()+dev,{text:v,at:Date.now()});$("nTxt").value="";toast("Note saved");render()};
+function tab(t){document.querySelectorAll("main>section").forEach(s=>s.hidden=s.id!="t-"+t);document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t==t));scrollTo(0,0)}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>tab(b.dataset.t));
+$("sUrl").value=localStorage.grvUrl||"";$("sCode").value=localStorage.grvCode||"";
+$("sSave").onclick=()=>{localStorage.grvUrl=$("sUrl").value.trim();localStorage.grvCode=$("sCode").value.trim();toast("Saved");sync(true)};$("sNow").onclick=()=>sync(true);
+let busy=0;async function sync(loud){const url=localStorage.grvUrl,code=localStorage.grvCode;if(!url||!code||busy||!navigator.onLine)return;busy=1;const sent=db.q.slice();
+ try{const r=await(await fetch(url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({code,device:dev,since:db.since,changes:sent})})).json();
+  if(!r.ok)throw Error(r.error);db.q=db.q.slice(sent.length);r.records.forEach(x=>{const cur=db[x.kind]&&db[x.kind][x.id];if(!db[x.kind])return;if(x.del)delete db[x.kind][x.id];else if(!cur||cur.u<=x.u)db[x.kind][x.id]={...x.data,u:x.u}});db.since=r.now;persist();localStorage.grvLast=new Date().toLocaleString();$("sInfo").textContent="Last synced "+localStorage.grvLast;if(loud)toast("☁️ Synced")}
+ catch(e){$("sInfo").textContent="Sync failed: "+e.message;if(loud)toast("Sync failed")}busy=0;render()}
+addEventListener("online",()=>sync());$("sInfo").textContent=localStorage.grvLast?"Last synced "+localStorage.grvLast:"Not set up yet";
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js");
+resetForm();render();sync();
+</script></body></html>
