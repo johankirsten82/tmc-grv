@@ -188,9 +188,9 @@ async function syncNow(loud){if(!on()||busy)return;if(!navigator.onLine){syState
 window.syncNow=syncNow;setInterval(()=>{if(document.visibilityState==="visible")syncNow()},60000);addEventListener("online",()=>syncNow());
 // ---------- users / gate (ported from TMC Sahara Purshes) ----------
 const PK=["rec","edit","xl","admin"],ALL={rec:1,edit:1,xl:1,admin:1};window.PERM=ALL;
-const NN=x=>String(x||"").toLowerCase().replace(/\s+/g,"");const ADMIN0=["jakirsten","johankirsten"];
+const NN=x=>String(x||"").toLowerCase().replace(/\s+/g,"");const ADMIN0=["jakirsten","johankirsten","johanakirsten","jkirsten"];const NK=x=>{const n=NN(x).replace(/\./g,"");return ADMIN0.includes(n)?"jakirsten":n};
 const hasAdmin=()=>users.some(u=>u&&u.perms&&u.perms.admin&&u.pinH);
-const me=()=>{const L=users.filter(u=>u&&NN(u.name)===NN(me_()));return L.find(u=>!u.status)||L.find(u=>u.status==="blocked")||L.find(u=>u.status==="rejected")||L.find(u=>u.status==="pending")||L[0]};
+const me=()=>{const L=users.filter(u=>u&&NK(u.name)===NK(me_()));return L.find(u=>!u.status)||L.find(u=>u.status==="blocked")||L.find(u=>u.status==="rejected")||L.find(u=>u.status==="pending")||L[0]};
 const pend=()=>users.filter(u=>u&&u.status==="pending");let lastPend=-1;
 async function H(pin,salt){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(salt+":"+pin));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 const salt=()=>[...crypto.getRandomValues(new Uint8Array(12))].map(x=>x.toString(16).padStart(2,"0")).join("");const okPin=p=>/^\d{4,6}$/.test(p);
@@ -199,7 +199,7 @@ function gate(html,bind){let g=$("gate");if(!g){g=document.createElement("div");
 const ungate=()=>{if($("gate"))$("gate").remove()};
 function refresh(){loadU();if(!me_()||$("login")){ungate();apply(ALL);return}
 if(!hasAdmin()&&syncFirst()){connScr();apply({});return}
-if(!hasAdmin()){if(ADMIN0.includes(NN(me_())))setPin();else ungate();apply(ALL);return}
+if(!hasAdmin()){if(NK(me_())==="jakirsten")setPin();else ungate();apply(ALL);return}
 const u=me();if(!u){users.push({id:"r"+Date.now(),name:me_(),status:"pending",dev,at:nowLocal()});saveU();syncNow(true);waitScr();apply({});return}
 if(u.status==="pending"){waitScr();apply({});return}if(u.status==="rejected"){deniedScr();apply({});return}if(u.status==="blocked"){blockedScr();apply({});return}
 if(u.pinH&&LS("uok")!==u.id+":"+u.pinH){pinScr(u);apply({});return}
