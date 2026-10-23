@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f766e"><link rel="manifest" href="manifest.json?v=3">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=3"><link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=3"><link rel="icon" type="image/svg+xml" href="icons/icon.svg?v=3"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0f766e"><link rel="manifest" href="manifest.json?v=4">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png?v=4"><link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png?v=4"><link rel="icon" type="image/svg+xml" href="icons/icon.svg?v=4"><meta name="apple-mobile-web-app-capable" content="yes">
 <title>TMC GRV</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:system-ui,sans-serif;background:#f1f5f9;color:#0f172a}
@@ -96,7 +96,7 @@ html.no-edit.ro-on #save{display:none!important}
 </style></head><body>
 <header><h1><span class="tfull" data-t="title"></span><span class="tshort">TMC GRV</span></h1><div class="hdr"><button type="button" id="syDot" class="sydot" style="display:none"></button><button type="button" id="uBtn" class="sydot" title="" style="display:none">👤</button><select id="lang" aria-label="Language"><option value="en">🌐 EN</option><option value="fr">🌐 FR</option><option value="ar">🌐 ع</option></select></div></header>
 <main>
-<div id="tabH"><div class="card hhero"><img src="icons/icon-192.png?v=3" alt="" width="64" height="64"><div><h2 data-t="title"></h2><div id="hDate"></div></div></div><div class="banner" id="dupBanH" style="display:none"></div><div class="card hhi" id="hHi" style="display:none"></div><button type="button" class="pdel" id="hReq" style="display:none;width:100%;font-size:16px;margin:0 0 10px"></button><button type="button" class="sec lobtn" id="hLogout" data-t="loBtn" style="display:none;width:100%;margin:0 0 10px"></button>
+<div id="tabH"><div class="card hhero"><img src="icons/icon-192.png?v=4" alt="" width="64" height="64"><div><h2 data-t="title"></h2><div id="hDate"></div></div></div><div class="banner" id="dupBanH" style="display:none"></div><div class="card hhi" id="hHi" style="display:none"></div><button type="button" class="pdel" id="hReq" style="display:none;width:100%;font-size:16px;margin:0 0 10px"></button><button type="button" class="sec lobtn" id="hLogout" data-t="loBtn" style="display:none;width:100%;margin:0 0 10px"></button>
 <div class="hgrid"><button type="button" class="htile" data-go="N"><span class="hi">📥</span><span class="hl" data-t="tabN"></span><b id="hcN"></b><small id="hsN"></small></button><button type="button" class="htile" data-go="L"><span class="hi">📋</span><span class="hl" data-t="tabL"></span><b id="hcL"></b><small id="hsL"></small></button><button type="button" class="htile xlonly" data-go="X"><span class="hi">📊</span><span class="hl" data-t="tabX"></span><b id="hcX"></b><small id="hsX"></small></button><button type="button" class="htile" data-go="T"><span class="hi">📝</span><span class="hl" data-t="tabT"></span><b id="hcT"></b><small id="hsT"></small></button></div><div class="card hsync" id="hSync"></div></div>
 <div id="tabN" style="display:none"><div class="card"><form id="f"><h2 id="fTitle" style="margin:0 0 6px;font-size:19px"></h2><div class="banner" id="roBan" data-t="roMsg" style="display:none"></div>
 <div class="row"><div><label data-t="grvNo"></label><input id="gNo" required readonly style="background:#f1f5f9"></div><div><label data-t="date"></label><input id="gDate" type="date" required></div></div>
@@ -193,7 +193,7 @@ const pend=()=>users.filter(u=>u&&u.status==="pending");let lastPend=-1;
 async function H(pin,salt){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(salt+":"+pin));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
 const salt=()=>[...crypto.getRandomValues(new Uint8Array(12))].map(x=>x.toString(16).padStart(2,"0")).join("");const okPin=p=>/^\d{4,6}$/.test(p);
 function apply(P){window.PERM=P;const h=document.documentElement;h.classList.toggle("is-admin",!!P.admin);h.classList.toggle("no-rec",!P.rec);h.classList.toggle("no-edit",!P.edit);h.classList.toggle("no-xl",!P.xl);$("uBtn").style.display=me_()?"":"none";$("uBtn").title=me_();try{render()}catch(e){}}
-function gate(html,bind){let g=$("gate");if(!g){g=document.createElement("div");g.id="gate";document.body.appendChild(g)}g.innerHTML=`<div class="card"><img src="icons/icon-192.png?v=3" width="72" height="72" alt="" style="border-radius:16px">${html}</div>`;bind(g)}
+function gate(html,bind){let g=$("gate");if(!g){g=document.createElement("div");g.id="gate";document.body.appendChild(g)}g.innerHTML=`<div class="card"><img src="icons/icon-192.png?v=4" width="72" height="72" alt="" style="border-radius:16px">${html}</div>`;bind(g)}
 const ungate=()=>{if($("gate"))$("gate").remove()};
 function refresh(){loadU();if(!me_()||$("login")){ungate();apply(ALL);return}
 if(!hasAdmin()&&syncFirst()){connScr();apply({});return}
@@ -214,7 +214,7 @@ let _cn=0;function connScr(){gate(`<h2>⏳ ${esc(t("gConnT"))}</h2><p style="col
 const run=async()=>{const my=++_cn;$("gSync").style.display="none";await syncNow(true);if(my!==_cn||!$("gate"))return;if(syncFirst()){$("gSt")&&($("gSt").textContent=$("syStat").textContent);$("gSync")&&($("gSync").style.display="")}else refresh()};$("gSync").onclick=run;$("gOther").onclick=other;setTimeout(run,50)})}
 function other(){LS("user",null);LS("uok",null);ungate();apply(ALL);document.documentElement.classList.remove("is-admin");showLogin()}
 function showLogin(){if($("login"))return;ungate();const N=[...new Set(users.filter(u=>!u.status).map(u=>u.name))],d=document.createElement("div");d.id="login";
-d.innerHTML=`<div class="card"><img src="icons/icon-192.png?v=3" width="88" height="88" alt=""><h2>${esc(t("title"))}</h2><p style="margin:0 0 12px;color:#475569">${esc(t("lgWelcome"))}</p><select id="lgLang"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option></select><label for="lgName" style="text-align:start">${esc(t("lgName"))}</label><input id="lgName" list="lgList" autocomplete="name" maxlength="60"><datalist id="lgList">${N.map(n=>`<option value="${esc(n)}">`).join("")}</datalist><small id="lgErr" style="color:#b91c1c;display:none">${esc(t("lgNeed"))}</small><button type="button" id="lgGo">${esc(t("lgGo"))}</button><small style="display:block;color:#64748b;margin-top:8px">${esc(t("lgNote"))}</small></div>`;
+d.innerHTML=`<div class="card"><img src="icons/icon-192.png?v=4" width="88" height="88" alt=""><h2>${esc(t("title"))}</h2><p style="margin:0 0 12px;color:#475569">${esc(t("lgWelcome"))}</p><select id="lgLang"><option value="en">English</option><option value="fr">Français</option><option value="ar">العربية</option></select><label for="lgName" style="text-align:start">${esc(t("lgName"))}</label><input id="lgName" list="lgList" autocomplete="name" maxlength="60"><datalist id="lgList">${N.map(n=>`<option value="${esc(n)}">`).join("")}</datalist><small id="lgErr" style="color:#b91c1c;display:none">${esc(t("lgNeed"))}</small><button type="button" id="lgGo">${esc(t("lgGo"))}</button><small style="display:block;color:#64748b;margin-top:8px">${esc(t("lgNote"))}</small></div>`;
 document.body.appendChild(d);$("lgLang").value=lang;$("lgLang").onchange=()=>{lang=$("lgLang").value;LS("lang",lang);applyLang()};
 const go=()=>{const n=$("lgName").value.trim().replace(/\s+/g," ");if(!n){$("lgErr").style.display="block";return}LS("user",n);d.remove();$("gBy").value=n;refresh();renderH0()};$("lgGo").onclick=go;$("lgName").onkeydown=e=>{if(e.key==="Enter")go()}}
 window.doLogout=async()=>{const u=me_();if(!u)return;if(!confirm(t("loAsk").replace("%n",u)))return;let n=db.q.length;if(n&&on()&&navigator.onLine){sToast(t("loSync"));await syncNow(true);n=db.q.length}if(n&&!confirm(t("loPend").replace("%n",n)))return;showTab("H");other();sToast(t("loDone"))};
@@ -282,7 +282,7 @@ async function makePdf(g){try{await loadJs(JSPDF)}catch(e){throw Error(t("pdfNet
  const para=(s,sz,col,b)=>wrap(s,W-2*M,sz,b).forEach(l=>{need(sz+10);txt(l,rtl?W-M:M,y,sz,col,b,rtl?"right":"left");y+=sz+10});
  const head=s=>{need(60);y+=14;x.fillStyle="#0f766e";x.fillRect(M,y,W-2*M,44);txt(s,rtl?W-M-14:M+14,y+9,24,"#fff",1,rtl?"right":"left");y+=56};
  const kv=P=>{const cw=(W-2*M)/2;for(let i=0;i<P.length;i+=2){need(64);[P[i],P[i+1]].forEach((p,j)=>{if(!p)return;const X=rtl?W-M-(j*cw):M+j*cw,al=rtl?"right":"left";txt(p[0],X,y,18,"#64748b",0,al);txt(wrap(p[1]||"—",cw-20,23,1)[0],X,y+24,23,"#0f172a",1,al)});y+=64}};
- np();const logo=await imgOf("icons/icon-192.png?v=3");
+ np();const logo=await imgOf("icons/icon-192.png?v=4");
  x.fillStyle="#0f766e";x.fillRect(0,0,W,150);if(logo)x.drawImage(logo,rtl?W-M-110:M,20,110,110);txt("TMC GRV",rtl?W-M-130:M+130,30,46,"#fff",1,rtl?"right":"left");txt(t("newGrv").replace(/^\S+\s/,""),rtl?W-M-130:M+130,88,22,"#ccfbf1",0,rtl?"right":"left");
  txt(g.no||t("pendNo"),rtl?M:W-M,34,40,"#fff",1,rtl?"left":"right");txt(t("uref")+": "+(g.ref||""),rtl?M:W-M,90,22,"#ccfbf1",0,rtl?"left":"right");y=180;
  kv([[t("pdfNo"),g.no||"⏳ "+t("pendNo")],[t("uref"),g.ref],[t("date"),g.date],[t("supplier"),g.sup],[t("poNo"),g.po],[t("recBy"),g.by],[t("loc"),g.loc],[t("cond"),t(status(g)[0])]].filter(p=>p[0]));
@@ -336,7 +336,7 @@ $("syEye").onclick=()=>{const p=$("syUrl").type==="password";$("syUrl").type=$("
 $("lang").onchange=()=>{lang=$("lang").value;LS("lang",lang);applyLang()};
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));document.querySelectorAll(".htile").forEach(b=>b.onclick=()=>showTab(b.dataset.go));
 $("shareApp").onclick=()=>{const u=location.href.split("#")[0].split("?")[0];if(navigator.share)navigator.share({title:t("title"),text:t("shMsg"),url:u}).catch(()=>{});else{navigator.clipboard&&navigator.clipboard.writeText(u);sToast(t("shCopied"))}};
-if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js?v=3");
+if("serviceWorker"in navigator&&location.protocol.startsWith("http"))navigator.serviceWorker.register("sw.js?v=4");
 resetForm();applyLang();showTab("H");if(!me_())showLogin();else refresh();syncNow();
 
 </script></body></html>
