@@ -1,4 +1,4 @@
-const C="tmc-grv-v8",F=["./","index.html","manifest.json?v=2","icons/icon-192.png?v=2","icons/icon-512.png?v=2","icons/apple-touch-icon.png?v=2","icons/favicon-32.png?v=2","icons/icon.svg?v=2","icons/icon-maskable-512.png?v=2"];
+const C="tmc-grv-v9",F=["./","index.html","manifest.json?v=3","icons/icon-192.png?v=3","icons/icon-512.png?v=3","icons/apple-touch-icon.png?v=3","icons/favicon-32.png?v=3","icons/icon.svg?v=3","icons/icon-maskable-512.png?v=3"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(F.map(u=>new Request(u,{cache:"reload"}))).then(()=>Promise.all(["https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js","https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js","https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"].map(u=>c.add(u).catch(()=>{}))))));self.skipWaiting()});
 // only remove OUR old caches (tmc-grv-*); never touch the Purchases app caches (pa-*) on the same origin
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C&&x.startsWith("tmc-grv-")).map(x=>caches.delete(x)))));self.clients.claim()});
