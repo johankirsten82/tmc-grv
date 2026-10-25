@@ -14,7 +14,7 @@ try{applyLang()}catch(e){}
 const q=(n,u)=>n==null?"?":n+(u?" "+u:"");let last=null;
 window.hoRender=function(ho){last=ho;const o=$("hoOut");if(!ho.lines.length){o.innerHTML=`<p class="banner">${esc(t("hoNone"))}</p>`;return}
   const c=HO.compare(ho,db.grv),ic={ok:"✅",diff:"🟠",miss:"❌"},lb={ok:"hoOk",diff:"hoDiff",miss:"hoMiss"};
-  o.innerHTML=`${ho.date?`<p style="margin:10px 0 0;color:#475569">${esc(t("hoDate").replace("%d",ho.date))}</p>`:""}<div class="hosum">${esc(t("hoSum").replace("%a",c.n.ok).replace("%b",c.n.diff).replace("%c",c.n.miss))}</div>`+
+  o.innerHTML=`${ho.date?`<p style="margin:10px 0 0;color:#475569">${esc(t("hoDate").replace("%d",ho.date))}</p>`:""}<div class="hosum">${esc(t("hoSum").replace("%a",c.n.ok).replace("%b",c.n.diff).replace("%c",c.n.miss))}</div>`+(window.TMC&&TMC.reportHTML?TMC.reportHTML(t("hoT"),[[t("hoOk"),c.n.ok],[t("hoDiff"),c.n.diff],[t("hoMiss"),c.n.miss]]):"")+
   c.rows.map(r=>`<div class="hor ${r.st}"><span class="ic">${ic[r.st]}</span><div><b>${esc(r.h.no)}. ${esc(r.h.desc)}</b><small>${esc(r.h.sup)} · ${esc(r.h.code)}</small><small><b>${esc(t(lb[r.st]))}</b></small>`+
    (r.st==="diff"?`<span class="hoq">${esc(t("hoHO"))}: ${esc(q(r.h.qty,r.h.unit))} → ${esc(t("hoApp"))}: ${esc(q(r.a.qty,r.a.unit))}</span>`:`<span class="hoq">${esc(t("hoHO"))}: ${esc(q(r.h.qty,r.h.unit))}${r.a?` · ${esc(t("hoApp"))}: ${esc(q(r.a.qty,r.a.unit))}`:""}</span>`)+
    (r.a?`<small>📥 ${esc(r.a.gno)} · ${esc(r.a.date)} · ${esc(r.a.item)}</small>`:"")+`</div></div>`).join("")+
