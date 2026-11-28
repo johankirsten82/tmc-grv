@@ -66,7 +66,7 @@ function repScreenHTML(u){
  return `<div class="box noPr" id="rpPick"><div class="rpBar">${[["today","rpToday"],["month","rpMonth"],["pick","rpDates"]].map(([k,l])=>`<button type="button" class="sec${rp.p===k?" on":""}" data-rpp="${k}">${esc(t(l))}</button>`).join("")}</div>
  ${rp.p==="pick"?`<div class="rpDates"><div><label for="rpF">${esc(t("rpFrom"))}</label><input type="date" id="rpF" value="${esc(f)}"></div><div><label for="rpT">${esc(t("rpTo"))}</label><input type="date" id="rpT" value="${esc(to)}"></div></div><button type="button" id="rpGo">${esc(t("rpShow"))}</button>`:""}</div>
  <div class="box" id="rpOut">${repTable(def,D)}</div>
- <div class="rpAct noPr">${canXlsU(u)?`<button type="button" class="rpXls" id="rpXls">${esc(t("rpXls"))}</button>`:""}<button type="button" class="sec" id="rpPrint">${esc(t("rpPrint"))}</button><button type="button" class="sec rpBk" id="rpBack">${esc(t("rpBack"))}</button></div>`}
+ <div class="rpAct noPr">${canXlsU(u)?`<button type="button" class="rpXls" id="rpXls">${esc(t("rpXls"))}</button>`:""}<button type="button" class="sec" id="rpPrint">${esc(t("rpPrint"))}</button></div>`}
 function canXlsU(u){return repOk(u)}
 function bindRep(u){const on=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};
  document.querySelectorAll("[data-rp]").forEach(b=>b.onclick=()=>{rp.id=b.dataset.rp;rpRender()});
@@ -75,7 +75,7 @@ function bindRep(u){const on=(id,fn)=>{const e=$(id);if(e)e.onclick=fn};
  const cur=()=>REPORTS.length===1?REPORTS[0]:REPORTS.find(r=>r.id===rp.id);
  on("rpXls",()=>{const d=cur();if(d)sendXls(repXlsx(d,rpData(d)))});
  on("rpPrint",()=>window.print());
- on("rpBack",()=>{if(REPORTS.length>1&&rp.id){rp.id=null}else showTab("H");rpRender()})}
+ }
 Object.assign(window.TMC,{addReport:addReport,REPORTS:REPORTS,XL:XL,repXlsx:repXlsx,rpData:rpData,sendXls:sendXls,repOk:repOk,rpRender:rpRender,rp:()=>rp});
 /* ---- GRV's own reports ---- */
 const inR=(g,f,to)=>g&&g.date>=f&&g.date<=to;const G=()=>Object.values(db.grv);const n=v=>v===""||v==null?0:+v||0;
